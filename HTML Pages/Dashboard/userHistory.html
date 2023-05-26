@@ -26,8 +26,8 @@
             </ul>
         </nav>
         <div class="sign-in">
-            <a href="/HTML Pages/signIn.html">Sign In</a>
-            <button class="create-button" onclick="window.location.href='signUp.html'">Create Free Account</button>
+            <button class="create-button">Log Out</button>
+            <a href="doctorDashboard.html"><img class="signProfile" src="/HTML Pages/images/doctor/image5.jpg" alt="profile"></a>
         </div>
 
     </section>
@@ -39,6 +39,10 @@
                 <a href="doctorDashboard.html"><i class="fa fa-user " aria-hidden="true"><span>Profile</span></i></a>
             </div>
             <div>
+                <a href="schedule.html"><i class="fa fa-clock" aria-hidden="true"><span>Schedule</span></i>
+                </a>
+            </div>
+            <div>
                 <a href="appointments.html"><i class="fa fa-plus-square "
                         aria-hidden="true"><span>Appointments</span></i></a>
             </div>
@@ -47,7 +51,7 @@
                         aria-hidden="true"><span>History</span></i></a>
             </div>
 
-            <img src="/HTML Pages/images/dashboard/image216.png" alt="">
+            <img id="patientDash" src="/HTML Pages/images/dashboard/image216.png" alt="">
             <div id="setting">
                 <i class="fa fa-cog" aria-hidden="true">&nbsp Setting</i>
             </div>
@@ -104,7 +108,7 @@
                     <td>Dr. Prio ATM</td>
                     <td>Mon,18/05/2023</td>
                     <td>Elbow problems</td>
-                    <td><button class="prsView" onclick="window.location.href='prescription.html'">View</button>  </td>
+                    <td><button class="prsView" onclick="window.location.href='prescription.html'">View</button> </td>
                 </tr>
                 </tr>
                 <tr>

@@ -1,7 +1,7 @@
 extends base
 
 block content 
-    section.doctorDetails
+    section.doctorDetails(data-doctor=`${doctor._id}` data-user=user?`${user._id}`:'')
         .doctor
             img.img(src=`../../../img/user/${doctor.photo}` alt=doctor.name)
             .nameLine
@@ -23,15 +23,15 @@ block content
                     .input
                         label(for="Date") Date 
                         br
-                        input(type="date" name="" id="")
+                        input(type="date" name="" id="dateInput")
 
                     .input
                         label(for="Time") Time
                         br
-                        select(name="" id="")
+                        select(name="" id="timeRangeSelect")
                             each tt in timeRange
-                                option(value="")= tt
-                            
+                                option(value=`${tt}`)= tt
+
                     .input
                         label(for="Symptoms") Symptoms
                         br
@@ -48,8 +48,26 @@ block content
                         p= `${schedule.startTime} - ${schedule.endTime}`
                 div
                     h3 Consultation Fee
-                    h4= `${doctor.fee}TK`
+                    h4.feeClass= `${doctor.fee}TK`
 
+                hr.vLine
+                .wReview
+                    h3 Rate & Review
+                    .rate
+                        input(type="radio" id="star5" name="rate" value="5" )
+                        label(for="star5" title="text")
+                        input(type="radio" id="star4" name="rate" value="4")
+                        label(for="star4" title="text")
+                        input(type="radio" id="star3" name="rate" value="3")
+                        label(for="star3" title="text")
+                        input(type="radio" id="star2" name="rate" value="2")
+                        label(for="star2" title="text")
+                        input(type="radio" id="star1" name="rate" value="1")
+                        label(for="star1" title="text")
+                    div
+                        textarea(type="text" placeholder="Write a Review")
+                        p
+                            button.button1 Add Review
                 div
                     p.stories User Stories(189)
 

@@ -26,8 +26,8 @@
             </ul>
         </nav>
         <div class="sign-in">
-            <a href="/HTML Pages/signIn.html">Sign In</a>
-            <button class="create-button" onclick="window.location.href='signUp.html'">Create Free Account</button>
+            <button class="create-button">Log Out</button>
+            <a href="doctorDashboard.html"><img class="signProfile" src="/HTML Pages/images/doctor/image5.jpg" alt="profile"></a>
         </div>
 
     </section>
@@ -40,6 +40,10 @@
                         aria-hidden="true"><span>Profile</span></i></a>
             </div>
             <div>
+                <a href="schedule.html"><i class="fa fa-clock" aria-hidden="true"><span>Schedule</span></i>
+                </a>
+            </div>
+            <div>
                 <a href="appointments.html"><i class="fa fa-plus-square "
                         aria-hidden="true"><span>Appointments</span></i></a>
             </div>
@@ -47,7 +51,7 @@
                 <a href="userHistory.html"><i class="fa fa-history" aria-hidden="true"><span>History</span></i></a>
             </div>
 
-            <img src="/HTML Pages/images/dashboard/image216.png" alt="">
+            <img id="patientDash" src="/HTML Pages/images/dashboard/image216.png" alt="">
             <div id="setting">
                 <i class="fa fa-cog" aria-hidden="true">&nbsp Setting</i>
             </div>
@@ -161,16 +165,12 @@
             </div>
             <div class="right-info-right">
                 <div>
-                    <img src="/HTML Pages/images/doctor/image2.jpg" alt="">
+                    <img src="/HTML Pages/images/doctor/image5.jpg" alt="">
                     <input type="file" name="" id="">
 
                 </div>
-                <div>
-                    <div class="schedule">
-                        <a href="schedule.html"> <button class="button1">Add Schedule</button></a>
-                    </div>
-                </div>
-                <div class="button">
+
+                <div style="margin-top: 200px;" class="button">
                     <button class="signbtn">Save</button>
                 </div>
             </div>
