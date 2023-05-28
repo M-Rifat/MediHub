@@ -10,6 +10,7 @@ router.use(authController.protect);
 router.get('/', appointmentController.getAllAppointment);
 router.post('/', appointmentController.createAppointment);
 router.get('/:id', appointmentController.getAppointment);
+router.post('/:id',authController.restrictTo('receptionist'), appointmentController.updateAppoint);
 
 
 module.exports = router;
