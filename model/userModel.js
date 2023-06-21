@@ -68,6 +68,9 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     default: false
   },
+  birthDate:{
+    type: Date
+  },
   gender: String,
   address: String,
   specialty: {
@@ -111,6 +114,10 @@ const userSchema = mongoose.Schema({
   ratingsQuantity: {
     type: Number,
     default: 0
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 }, {
   toJSON: { virtuals: true },

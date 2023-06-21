@@ -13,25 +13,25 @@ if (title.includes('Home Page')) {
 
 const url = document.location.pathname;
 //console.log(url);
-if(url==='/dashboard'){
+if (url === '/dashboard') {
   const hiper = document.querySelector('.fa-user');
   hiper.classList.add('active');
 }
 
-if(url==='/dashboard/appointments'){
+if (url === '/dashboard/appointments') {
   const hiper = document.querySelector('.fa-plus-square');
   hiper.classList.add('active');
 }
-if(url==='/dashboard/doctors'){
+if (url === '/dashboard/doctors') {
   const hiper = document.querySelector('.fa-user-md');
   hiper.classList.add('active');
 }
-if(url==='/dashboard/history'){
+if (url === '/dashboard/history') {
   let hiper = document.querySelector('.fa-user-plus');
-  if(!hiper)hiper =  document.querySelector('.fa-history');
+  if (!hiper) hiper = document.querySelector('.fa-history');
   hiper.classList.add('active');
 }
-if(url==='/dashboard/schedule'){
+if (url === '/dashboard/schedule') {
   const hiper = document.querySelector('.fa-clock');
   hiper.classList.add('active');
 }
@@ -49,7 +49,7 @@ if (logInBtn) {
     const phone = document.querySelector('#phoneId').value;
     const password = document.querySelector('#passwordId').value;
     if (phone && password) {
-      console.log(phone, password);
+      //console.log(phone, password);
       login(phone, password);
     }
   });
@@ -134,16 +134,18 @@ if (paymentStatusSelectBox) {
 }
 
 import { updateProfile } from './updateProfile';
+import axios from 'axios';
 
 const saveBtn = document.querySelector('#saveBtn');
 if (saveBtn) {
   const datas = JSON.parse(JSON.stringify(saveBtn.dataset));
-  //console.log(datas);
+  const user = JSON.parse(datas.user);
+  //console.log(user.role);
   saveBtn.addEventListener('click', el => {
     el.preventDefault();
     const name = document.querySelector('#nameInput').value;
     const phone = document.querySelector('#phoneInput').value;
-    const address = document.querySelector('#addressInput').value;
+    const address = document.querySelector('#addressInput');
     const email = document.querySelector('#emailInput').value;
     const password = document.querySelector('#passwordInput').value;
     const passwordConfirm = document.querySelector('#passwordConfirmInput').value;
@@ -152,23 +154,213 @@ if (saveBtn) {
     const gender = document.querySelector('#genderInput').value;
     const bloodGroup = document.querySelector('#bloodInput').value;
     const photo = document.querySelector('#imgInput').files[0];
-    //console.log(photo);
+    const hospital = document.querySelector('#hospitalInput');
+    const specialty = document.querySelector('#specialtyInput');
+    const experience = document.querySelector('#experienceInput');
+    const training = document.querySelector('#trainingInput');
+    const education = document.querySelector('#educationInput');
+    const diabeticYes = document.querySelector('#diabeticYesInput');
+    const diabeticNo = document.querySelector('#diabeticNoInput');
+
     const form = new FormData();
-    form.append('name',name);
-    form.append('phone',phone);
-    form.append('address',address);
-    form.append('email',email);
-    form.append('age',age);
-    form.append('gender',gender);
-    form.append('bloogGroup',bloodGroup);
-    form.append('photo',photo);
-    // const formDataObj = Object.fromEntries(form.entries());
-    // console.log(formDataObj);
-    updateProfile(form,'data');
+    form.append('name', name);
+    form.append('phone', phone);
+    if (user.role === 'user' || user.role === 'receptionist') {
+      form.append('address', address.value);
+      form.append('isDiabetic', diabeticYes.checked);
+    }
+    if (email)
+      form.append('email', email);
+    form.append('age', age);
+    form.append('gender', gender);
+    form.append('birthDate', birthDate);
+    form.append('bloodGroup', bloodGroup);
+    if (photo) {
+      form.append('photo', photo);
+    }
+
+    if (user.role === 'doctor') {
+      form.append('hospital', hospital.value);
+      form.append('specialty', specialty.value);
+      form.append('experience', experience.value);
+      const edu = education.value.split('\n');
+      const trainings = training.value.split('\n');
+      edu.forEach(el => { if (el) form.append('education', el); });
+      trainings.forEach(el => { if (el) form.append('training', el); });
+    }
+    if (user.role === 'receptionist') {
+      form.append('hospital', hospital.value);
+    }
+    updateProfile(form, 'data');
   })
 
 }
 
+import { createPrescription, updatePrescription } from './prescription';
+
+const addPrescriptionBtn = document.querySelectorAll('#addPrescriptionBtn');
+if (addPrescriptionBtn) {
+  addPrescriptionBtn.forEach(el => {
+    const datas = JSON.parse(JSON.stringify(el.dataset));
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      createPrescription(datas.appointmentid, datas.symptoms);
+    });
+  });
+}
+
+const prescription = document.querySelectorAll('.prescription');
+let prescriptionSerial = 0;
+if (prescription) {
+  prescriptionSerial = prescription.length + 1;
+}
+const medicineAddBtn = document.querySelector('#medicineAddBtn');
+if (medicineAddBtn) {
+  medicineAddBtn.addEventListener('click', el => {
+    el.preventDefault();
+    const table = document.querySelector('#tableBody');
+    const child = document.createElement('tr');
+    child.classList.add('prescription');
+    child.innerHTML = `<td>${prescriptionSerial++}.</td>
+    <td><input type="test" name="med_name" placeholder="Insert Medicine Name" id="nameInput" required></td>
+    <td><input type="number" name="" id="morningInput" value="0" class="mTime"></td>
+    <td><input type="number" name="" id="noonInput" value="0" class="mTime"></td>
+    <td><input type="number" name="" id="nightInput" value="0" class="mTime"></td>
+
+    <td><select id="time" name="time" class="takingTimeInput" required>
+            <option value="selectOne">Select One</option>
+            <option value="beforeMeal">Before Meal</option>
+            <option value="afterMeal">After Meal</option>
+        </select>
+    </td>`.trim();
+    table.appendChild(child);
+  });
+}
+
+const prescriptionSaveBtn = document.querySelector('#prescriptionSaveBtn');
+if (prescriptionSaveBtn) {
+  prescriptionSaveBtn.addEventListener('click', e => {
+    e.preventDefault();
+    const prescriptions = document.querySelectorAll('.prescription');
+    const form = new FormData();
+    const medicines = [];
+    prescriptions.forEach(el => {
+      const name = el.querySelector('#nameInput').value;
+      const morning = el.querySelector('#morningInput').value;
+      const noon = el.querySelector('#noonInput').value;
+      const night = el.querySelector('#nightInput').value;
+      const takingTime = el.querySelector('.takingTimeInput').value;
+      if (name) {
+        const medicine = {
+          name,
+          morning,
+          noon,
+          night,
+          takingTime
+        };
+        medicines.push(medicine);
+      }
+    });
+    let presId = location.pathname;
+    presId = presId.split('/')[2];
+    form.append('medicine', JSON.stringify(medicines));
+    let data = Object.fromEntries([...form.entries()]);
+    data = JSON.parse(data.medicine);
+    const body = {
+      medicine: data,
+      tests: document.querySelector('.testInput').value,
+      advices: document.querySelector('.adviceInput').value,
+      symptoms: document.querySelector('.symptomInput').value
+    }
+    //console.log(body);
+    updatePrescription(presId, body);
+  });
+}
+
+
+const convertTime24to12 = (time) => {
+  const [hours, minutes] = time.split(':');
+  return (((hours % 12) || 12) + ':' + minutes + ' ' + (hours >= 12 ? 'PM' : 'AM'));
+}
+
+const updateValidSchedules = () => {
+  let schedule = [];
+  const scheduleCard = document.querySelectorAll('.scheduleCard');
+  scheduleCard.forEach(el => {
+    const startTime = el.querySelector('#startTimeInput').value;
+    const endTime = el.querySelector('#endTimeInput').value;
+    const day = el.querySelector('.dayHead').textContent.split(':')[0];
+    if (startTime && endTime) {
+      schedule.push({ day, startTime: convertTime24to12(startTime), endTime: convertTime24to12(endTime) });
+    }
+  });
+  updateProfile({ availability: schedule }, 'schedule')
+};
+
+const shouldUpdate = (parent) => {
+  const startTime = parent.querySelector('#startTimeInput').value;
+  const endTime = parent.querySelector('#endTimeInput').value;
+  return startTime && endTime;
+}
+
+const timeInput = document.querySelectorAll('.timeInput');
+if (timeInput) {
+  timeInput.forEach(el => {
+    const parent = el.parentElement;
+    el.addEventListener('change', e => {
+      e.preventDefault();
+      if (shouldUpdate(parent))
+        updateValidSchedules();
+    })
+  })
+}
+
+const searchBtnAll = document.querySelector('.searchBtnAll');
+if (searchBtnAll) {
+  searchBtnAll.addEventListener('click', el => {
+    el.preventDefault();
+    const searchBox = document.querySelector('.searchBox').value;
+    const locationBox = document.querySelector('.locationBox').value;
+    location.assign(`/doctors?q=${searchBox}&loc=${locationBox}`);
+  });
+}
+
+const searchBtnHos = document.querySelector('.searchBtnHos');
+if (searchBtnHos) {
+  searchBtnHos.addEventListener('click', el => {
+    el.preventDefault();
+    const searchBox = document.querySelector('.searchBox').value;
+    const locationBox = document.querySelector('.locationBox').value;
+    location.assign(`/hospitals?q=${searchBox}&loc=${locationBox}`);
+  });
+}
+
+
+
+import { createReview } from './reviews';
+
+const addReviewBtn = document.querySelector('#addReviewBtn');
+if (addReviewBtn) {
+  addReviewBtn.addEventListener('click', e => {
+    e.preventDefault();
+    const datas = JSON.parse(JSON.stringify(addReviewBtn.dataset));
+    //console.log(datas);
+    const data = datas;
+    const selectedRadio = document.querySelector('input[name="rate"]:checked');
+    if (selectedRadio) {
+      const selectedValue = selectedRadio.value;
+      data.rating = selectedValue;
+    } else {
+      return showAlert('error', 'Enter Rating', 2);
+    }
+    const reviewText = document.querySelector('#reviewText').value;
+    if (reviewText) {
+      data.review = reviewText;
+    }
+    else return showAlert('error', 'Enter Review', 2);
+    createReview(data);
+  });
+}
 
 const alertMessage = document.querySelector('body').dataset.alert;
 if (alertMessage) showAlert('success', alertMessage, 10);
